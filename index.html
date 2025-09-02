@@ -147,7 +147,7 @@ async function loadGangs(){
     content.className="gang-content";
 
     // Editable fields
-    content.appendChild(makeEditable("Case File By", gang.casefileby || "", "casefileby", gang.id));
+    content.appendChild(makeEditable("Case File By", gang.caseFileBy || "", "caseFileBy", gang.id));
     content.appendChild(makeEditable("Members", gang.members || "", "members", gang.id));
     content.appendChild(makeEditable("Notes", gang.notes || "", "notes", gang.id));
     content.appendChild(makeEditable("Google Doc URL", gang.googleDocUrl || "", "googleDocUrl", gang.id));
@@ -282,7 +282,7 @@ addGangBtn.onclick = async () => {
       name: name,
       members: "",
       images: "",
-      casefileby: "",
+      caseFileBy: "",
       notes: "",
       googleDocUrl: ""
     }]);
@@ -297,6 +297,7 @@ supabase.channel('realtime-gangs')
     loadGangs();
   }).subscribe();
 
+// Initial load
 loadGangs();
 </script>
 </body>
