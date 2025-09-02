@@ -5,30 +5,28 @@
 <title>Gang Intel</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  body { font-family: Arial, sans-serif; background:#f9fafb; margin:0; padding:20px; text-align:center; }
-  h1 { margin-bottom:20px; }
-  button { padding:10px 20px; margin-bottom:20px; cursor:pointer; border:none; border-radius:6px; font-size:16px; color:white; }
-  .gang-card { background:white; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); margin:20px auto; width:80%; max-width:800px; overflow:hidden; text-align:left; position:relative; }
-  .gang-header { background:#222; color:white; padding:16px; display:flex; justify-content:space-between; align-items:center; font-size:1.2rem; cursor:pointer; }
-  .gang-content { display:none; padding:16px; }
-  .gang-card.active .gang-content { display:block; }
-  .gang-card img { width:100%; max-height:200px; object-fit:cover; border-radius:8px; margin-top:10px; cursor:pointer; transition:transform 0.2s; }
-  .gang-card img:hover { transform:scale(1.05); }
-  .gang-card iframe { width:100%; height:200px; border:1px solid #ccc; border-radius:8px; margin-top:10px; }
-  .edit-btn { background-color:#2563eb; }
-  .delete-btn { background-color:#dc2626; }
-  .expand-btn { background-color:#f59e0b; }
-  .edit-icon { cursor:pointer; margin-left:5px; color:#2563eb; }
-  .edit-icon:hover { color:#1d4ed8; }
-
-  /* Modal */
-  .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background-color:rgba(0,0,0,0.9); display:flex; align-items:center; justify-content:center; }
-  .modal-content { width:90vw; height:90vh; max-width:1200px; max-height:90vh; }
-  .modal-content iframe, .modal-content img { width:100%; height:100%; border:none; }
-  .close-btn { position:absolute; top:20px; right:30px; color:white; font-size:30px; font-weight:bold; cursor:pointer; }
-
-  /* Hide Supabase UI banner/toast */
-  div#__supabase_ui_container__ { display: none !important; }
+body { font-family: Arial, sans-serif; background:#f9fafb; margin:0; padding:20px; text-align:center; }
+h1 { margin-bottom:20px; }
+button { padding:10px 20px; margin-bottom:20px; cursor:pointer; border:none; border-radius:6px; font-size:16px; color:white; }
+.gang-card { background:white; border-radius:12px; box-shadow:0 4px 8px rgba(0,0,0,0.1); margin:20px auto; width:80%; max-width:800px; overflow:hidden; text-align:left; position:relative; }
+.gang-header { background:#222; color:white; padding:16px; display:flex; justify-content:space-between; align-items:center; font-size:1.2rem; cursor:pointer; }
+.gang-content { display:none; padding:16px; }
+.gang-card.active .gang-content { display:block; }
+.gang-card img { width:100%; max-height:200px; object-fit:cover; border-radius:8px; margin-top:10px; cursor:pointer; transition:transform 0.2s; }
+.gang-card img:hover { transform:scale(1.05); }
+.gang-card iframe { width:100%; height:200px; border:1px solid #ccc; border-radius:8px; margin-top:10px; }
+.edit-btn { background-color:#2563eb; }
+.delete-btn { background-color:#dc2626; }
+.expand-btn { background-color:#f59e0b; }
+.edit-icon { cursor:pointer; margin-left:5px; color:#2563eb; }
+.edit-icon:hover { color:#1d4ed8; }
+/* Modal */
+.modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background-color:rgba(0,0,0,0.9); display:flex; align-items:center; justify-content:center; }
+.modal-content { width:90vw; height:90vh; max-width:1200px; max-height:90vh; }
+.modal-content iframe, .modal-content img { width:100%; height:100%; border:none; }
+.close-btn { position:absolute; top:20px; right:30px; color:white; font-size:30px; font-weight:bold; cursor:pointer; }
+/* Hide Supabase UI banner/toast */
+div#__supabase_ui_container__ { display: none !important; }
 </style>
 </head>
 <body>
@@ -45,8 +43,8 @@
 
 <script>
 const SUPABASE_URL = "https://esdqtnqozcfmcpjsskku.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzZHF0bnFvemNmbWNwanNza2t1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3Mjk3NzYsImV4cCI6MjA3MjMwNTc3Nn0.7wWpR-DD3LcU_iZe2UHQ926r_UF0WHQs2lHM5SQ4vKk"; // replace with your key
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzZHF0bnFvemNmbWNwanNza2t1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3Mjk3NzYsImV4cCI6MjA3MjMwNTc3Nn0.7wWpR-DD3LcU_iZe2UHQ926r_UF0WHQs2lHM5SQ4vKk";
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const gangContainer = document.getElementById("gangContainer");
 const addGangBtn = document.getElementById("addGangBtn");
@@ -54,7 +52,7 @@ const modal = document.getElementById("modal");
 const modalContent = document.getElementById("modalContent");
 const closeBtn = document.querySelector(".close-btn");
 
-// Close modal
+// Modal close
 closeBtn.onclick = () => { modal.style.display="none"; modalContent.innerHTML=""; }
 window.onclick = e => { if(e.target===modal){ modal.style.display="none"; modalContent.innerHTML=""; } }
 
@@ -128,7 +126,7 @@ function makeNameEditable(name, gangId){
   return container;
 }
 
-// Load gangs
+// Load gangs from SQL
 async function loadGangs(){
   const {data,error} = await supabase.from("gang_intel").select("*").order('id',{ascending:true});
   if(error){ console.error(error); return; }
@@ -146,7 +144,7 @@ async function loadGangs(){
     const content = document.createElement("div");
     content.className="gang-content";
 
-    // Editable fields
+    // Editable fields using exact column names
     content.appendChild(makeEditable("Case File By", gang.caseFileBy || "", "caseFileBy", gang.id));
     content.appendChild(makeEditable("Members", gang.members || "", "members", gang.id));
     content.appendChild(makeEditable("Notes", gang.notes || "", "notes", gang.id));
@@ -156,115 +154,6 @@ async function loadGangs(){
     const lastUpdated = document.createElement("p");
     lastUpdated.innerHTML=`<em>Last Updated: ${gang.updated_at ? new Date(gang.updated_at).toLocaleString() : ""}</em>`;
     content.appendChild(lastUpdated);
-
-    // Images container
-    const imagesContainer = document.createElement("div");
-    imagesContainer.style.display="flex";
-    imagesContainer.style.flexWrap="wrap";
-    imagesContainer.style.gap="10px";
-    content.appendChild(imagesContainer);
-
-    const renderImages = () => {
-      imagesContainer.innerHTML="";
-      if(gang.images){
-        gang.images.split(",").forEach((url,index) => {
-          if(url.trim()){
-            const imgWrapper = document.createElement("div");
-            imgWrapper.style.position="relative";
-
-            const img = document.createElement("img");
-            img.src = url.trim();
-            img.style.width="120px";
-            img.style.height="80px";
-            img.style.objectFit="cover";
-            img.style.borderRadius="6px";
-            img.style.cursor="pointer";
-            img.onclick = () => { modal.style.display="flex"; modalContent.innerHTML=`<img src="${img.src}">`; };
-
-            const editIcon = document.createElement("span");
-            editIcon.textContent="✏️";
-            editIcon.style.position="absolute";
-            editIcon.style.top="2px";
-            editIcon.style.right="2px";
-            editIcon.style.cursor="pointer";
-            editIcon.onclick = async e => {
-              e.stopPropagation();
-              const newUrl = prompt("Edit image URL:", url.trim());
-              if(newUrl){
-                const imgsArr = gang.images.split(",");
-                imgsArr[index] = newUrl.trim();
-                const { error } = await supabase.from("gang_intel").update({images: imgsArr.join(",")}).eq("id", gang.id);
-                if(error) alert("Error updating image: "+error.message);
-                else { gang.images = imgsArr.join(","); renderImages(); }
-              }
-            };
-
-            const delIcon = document.createElement("span");
-            delIcon.textContent="🗑️";
-            delIcon.style.position="absolute";
-            delIcon.style.bottom="2px";
-            delIcon.style.right="2px";
-            delIcon.style.cursor="pointer";
-            delIcon.onclick = async e => {
-              e.stopPropagation();
-              if(confirm("Delete this image?")){
-                const imgsArr = gang.images.split(",");
-                imgsArr.splice(index,1);
-                const { error } = await supabase.from("gang_intel").update({images: imgsArr.join(",")}).eq("id", gang.id);
-                if(error) alert("Error deleting image: "+error.message);
-                else { gang.images = imgsArr.join(","); renderImages(); }
-              }
-            };
-
-            imgWrapper.appendChild(img);
-            imgWrapper.appendChild(editIcon);
-            imgWrapper.appendChild(delIcon);
-            imagesContainer.appendChild(imgWrapper);
-          }
-        });
-      }
-    };
-    renderImages();
-
-    const addImageBtn = document.createElement("button");
-    addImageBtn.textContent="➕ Add Image";
-    addImageBtn.style.backgroundColor="#10b981";
-    addImageBtn.onclick = async () => {
-      const url = prompt("Enter image URL:");
-      if(url){
-        const newImages = gang.images ? gang.images + "," + url.trim() : url.trim();
-        const { error } = await supabase.from("gang_intel").update({images: newImages}).eq("id", gang.id);
-        if(error) alert("Error adding image: "+error.message);
-        else { gang.images = newImages; renderImages(); }
-      }
-    };
-    content.appendChild(addImageBtn);
-
-    // Google Doc iframe
-    if(gang.googleDocUrl){
-      const iframe = document.createElement("iframe");
-      iframe.src = gang.googleDocUrl.includes("/edit") ? gang.googleDocUrl : `${gang.googleDocUrl}/edit?usp=sharing`;
-      content.appendChild(iframe);
-
-      const expandBtn = document.createElement("button");
-      expandBtn.textContent="🔍 Expand Doc";
-      expandBtn.className="expand-btn";
-      expandBtn.onclick = () => { modal.style.display="flex"; modalContent.innerHTML=`<iframe src="${iframe.src}"></iframe>`; };
-      content.appendChild(expandBtn);
-    }
-
-    // Delete gang
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent="🗑️ Delete Gang";
-    deleteBtn.className="delete-btn";
-    deleteBtn.onclick = async () => {
-      if(confirm(`Delete ${gang.name}?`)){
-        const {error} = await supabase.from("gang_intel").delete().eq("id", gang.id);
-        if(error) alert("Error:"+error.message);
-        else loadGangs();
-      }
-    };
-    content.appendChild(deleteBtn);
 
     card.appendChild(header);
     card.appendChild(content);
@@ -297,7 +186,6 @@ supabase.channel('realtime-gangs')
     loadGangs();
   }).subscribe();
 
-// Initial load
 loadGangs();
 </script>
 </body>
