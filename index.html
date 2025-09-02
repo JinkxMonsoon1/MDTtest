@@ -21,16 +21,12 @@
   .edit-icon { cursor:pointer; margin-left:5px; color:#2563eb; }
   .edit-icon:hover { color:#1d4ed8; }
 
-  /* Modal */
   .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background-color:rgba(0,0,0,0.9); display:flex; align-items:center; justify-content:center; }
   .modal-content { width:90vw; height:90vh; max-width:1200px; max-height:90vh; }
   .modal-content iframe, .modal-content img { width:100%; height:100%; border:none; }
   .close-btn { position:absolute; top:20px; right:30px; color:white; font-size:30px; font-weight:bold; cursor:pointer; }
 
-  /* Hide Supabase UI banner/toast */
-  div#__supabase_ui_container__ {
-    display: none !important;
-  }
+  div#__supabase_ui_container__ { display: none !important; }
 </style>
 </head>
 <body>
@@ -39,7 +35,6 @@
 <button id="addGangBtn" style="background:#4caf50;">➕ Add Gang</button>
 <div id="gangContainer"></div>
 
-<!-- Modal -->
 <div id="modal" class="modal">
   <span class="close-btn">&times;</span>
   <div class="modal-content" id="modalContent"></div>
@@ -147,18 +142,15 @@ async function loadGangs(){
     const content = document.createElement("div");
     content.className="gang-content";
 
-    // Editable fields with new column names
     content.appendChild(makeEditable("Case File By", gang.casefileby || "", "casefileby", gang.id));
     content.appendChild(makeEditable("Members", gang.members || "", "members", gang.id));
     content.appendChild(makeEditable("Notes", gang.notes || "", "notes", gang.id));
     content.appendChild(makeEditable("Google Doc URL", gang.googleurl || "", "googleurl", gang.id));
 
-    // Last updated
     const lastUpdated = document.createElement("p");
     lastUpdated.innerHTML=`<em>Last Updated: ${gang.updated_at ? new Date(gang.updated_at).toLocaleString() : ""}</em>`;
     content.appendChild(lastUpdated);
 
-    // Images container
     const imagesContainer = document.createElement("div");
     imagesContainer.style.display="flex";
     imagesContainer.style.flexWrap="wrap";
@@ -227,7 +219,6 @@ async function loadGangs(){
     };
     renderImages();
 
-    // Add Image button
     const addImageBtn = document.createElement("button");
     addImageBtn.textContent="➕ Add Image";
     addImageBtn.style.backgroundColor="#10b981";
@@ -242,7 +233,6 @@ async function loadGangs(){
     };
     content.appendChild(addImageBtn);
 
-    // Google Doc iframe
     if(gang.googleurl){
       const iframe = document.createElement("iframe");
       iframe.src = gang.googleurl.includes("/edit") ? gang.googleurl : `${gang.googleurl}/edit?usp=sharing`;
@@ -255,7 +245,6 @@ async function loadGangs(){
       content.appendChild(expandBtn);
     }
 
-    // Delete gang
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent="🗑️ Delete Gang";
     deleteBtn.className="delete-btn";
@@ -293,11 +282,9 @@ addGangBtn.onclick = async () => {
   }
 };
 
-// Real-time updates
 supabase.channel('realtime-gangs')
-  .on('postgres_changes', { event: '*', schema: 'public', table: 'gang_intel' }, payload => {
-    loadGangs(); // reload gangs whenever a change happens
-  }).subscribe();
+  .on('postgres_changes', { event: '*', schema: 'public', table: 'gang_intel' }, payload => { loadGangs(); })
+  .subscribe();
 
 loadGangs();
 </script>
