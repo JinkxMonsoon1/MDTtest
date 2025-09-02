@@ -45,7 +45,7 @@
 
 <script>
 const SUPABASE_URL = "https://esdqtnqozcfmcpjsskku.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzZHF0bnFvemNmbWNwanNza2t1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3Mjk3NzYsImV4cCI6MjA3MjMwNTc3Nn0.7wWpR-DD3LcU_iZe2UHQ926r_UF0WHQs2lHM5SQ4vKk";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzZHF0bnFvemNmbWNwanNza2t1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3Mjk3NzYsImV4cCI6MjA3MjMwNTc3Nn0.7wWpR-DD3LcU_iZe2UHQ926r_UF0WHQs2lHM5SQ4vKk"; // replace with your key
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const gangContainer = document.getElementById("gangContainer");
@@ -57,6 +57,7 @@ const closeBtn = document.querySelector(".close-btn");
 closeBtn.onclick = () => { modal.style.display="none"; modalContent.innerHTML=""; }
 window.onclick = e => { if(e.target===modal){ modal.style.display="none"; modalContent.innerHTML=""; } }
 
+// Make any field editable
 function makeEditable(label, value, column, gangId){
   const p = document.createElement("p");
   const textSpan = document.createElement("span");
@@ -91,6 +92,7 @@ function makeEditable(label, value, column, gangId){
   return p;
 }
 
+// Editable gang name
 function makeNameEditable(name, gangId){
   const container = document.createElement("div");
   const nameSpan = document.createElement("span");
@@ -125,6 +127,7 @@ function makeNameEditable(name, gangId){
   return container;
 }
 
+// Load all gangs
 async function loadGangs(){
   const {data,error} = await supabase.from("gang_intel").select("*").order('id',{ascending:true});
   if(error){ console.error(error); return; }
@@ -142,21 +145,25 @@ async function loadGangs(){
     const content = document.createElement("div");
     content.className="gang-content";
 
+    // Editable fields (use exact column names)
     content.appendChild(makeEditable("Case File By", gang.casefileby || "", "casefileby", gang.id));
     content.appendChild(makeEditable("Members", gang.members || "", "members", gang.id));
     content.appendChild(makeEditable("Notes", gang.notes || "", "notes", gang.id));
-    content.appendChild(makeEditable("Google Doc URL", gang.googledocurl || "", "googledocurl", gang.id));
+    content.appendChild(makeEditable("Google Doc URL", gang.google_doc_url || "", "google_doc_url", gang.id));
 
+    // Last updated
     const lastUpdated = document.createElement("p");
     lastUpdated.innerHTML=`<em>Last Updated: ${gang.updated_at ? new Date(gang.updated_at).toLocaleString() : ""}</em>`;
     content.appendChild(lastUpdated);
 
+    // Images container
     const imagesContainer = document.createElement("div");
     imagesContainer.style.display="flex";
     imagesContainer.style.flexWrap="wrap";
     imagesContainer.style.gap="10px";
     content.appendChild(imagesContainer);
 
+    // Render images function
     const renderImages = () => {
       imagesContainer.innerHTML="";
       if(gang.images){
@@ -219,6 +226,7 @@ async function loadGangs(){
     };
     renderImages();
 
+    // Add Image button
     const addImageBtn = document.createElement("button");
     addImageBtn.textContent="➕ Add Image";
     addImageBtn.style.backgroundColor="#10b981";
@@ -233,9 +241,10 @@ async function loadGangs(){
     };
     content.appendChild(addImageBtn);
 
-    if(gang.googledocurl){
+    // Google Doc iframe
+    if(gang.google_doc_url){
       const iframe = document.createElement("iframe");
-      iframe.src = gang.googledocurl.includes("/edit")?gang.googledocurl:`${gang.googledocurl}/edit?usp=sharing`;
+      iframe.src = gang.google_doc_url.includes("/edit")?gang.google_doc_url:`${gang.google_doc_url}/edit?usp=sharing`;
       content.appendChild(iframe);
 
       const expandBtn = document.createElement("button");
@@ -245,6 +254,7 @@ async function loadGangs(){
       content.appendChild(expandBtn);
     }
 
+    // Delete gang
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent="🗑️ Delete Gang";
     deleteBtn.className="delete-btn";
@@ -265,6 +275,7 @@ async function loadGangs(){
   });
 }
 
+// Add new gang
 addGangBtn.onclick = async () => {
   const name = prompt("Enter gang name:");
   if(name){
@@ -274,16 +285,17 @@ addGangBtn.onclick = async () => {
       images: "",
       casefileby: "",
       notes: "",
-      googledocurl: ""
+      google_doc_url: ""
     }]);
     if(error) alert("Error adding gang:"+error.message);
     else loadGangs();
   }
 };
 
+// Real-time updates
 supabase.channel('realtime-gangs')
   .on('postgres_changes', { event: '*', schema: 'public', table: 'gang_intel' }, payload => {
-    loadGangs();
+    loadGangs(); // reload gangs whenever a change happens
   }).subscribe();
 
 loadGangs();
