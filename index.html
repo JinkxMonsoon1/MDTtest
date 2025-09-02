@@ -54,10 +54,11 @@ const modal = document.getElementById("modal");
 const modalContent = document.getElementById("modalContent");
 const closeBtn = document.querySelector(".close-btn");
 
+// Close modal
 closeBtn.onclick = () => { modal.style.display="none"; modalContent.innerHTML=""; }
 window.onclick = e => { if(e.target===modal){ modal.style.display="none"; modalContent.innerHTML=""; } }
 
-// Make any field editable
+// Make field editable
 function makeEditable(label, value, column, gangId){
   const p = document.createElement("p");
   const textSpan = document.createElement("span");
@@ -127,7 +128,7 @@ function makeNameEditable(name, gangId){
   return container;
 }
 
-// Load all gangs
+// Load gangs
 async function loadGangs(){
   const {data,error} = await supabase.from("gang_intel").select("*").order('id',{ascending:true});
   if(error){ console.error(error); return; }
@@ -145,11 +146,11 @@ async function loadGangs(){
     const content = document.createElement("div");
     content.className="gang-content";
 
-    // Editable fields (use exact column names)
+    // Editable fields
     content.appendChild(makeEditable("Case File By", gang.casefileby || "", "casefileby", gang.id));
     content.appendChild(makeEditable("Members", gang.members || "", "members", gang.id));
     content.appendChild(makeEditable("Notes", gang.notes || "", "notes", gang.id));
-    content.appendChild(makeEditable("Google Doc URL", gang.google_doc_url || "", "google_doc_url", gang.id));
+    content.appendChild(makeEditable("Google Doc URL", gang.googleDocUrl || "", "googleDocUrl", gang.id));
 
     // Last updated
     const lastUpdated = document.createElement("p");
@@ -163,7 +164,6 @@ async function loadGangs(){
     imagesContainer.style.gap="10px";
     content.appendChild(imagesContainer);
 
-    // Render images function
     const renderImages = () => {
       imagesContainer.innerHTML="";
       if(gang.images){
@@ -226,7 +226,6 @@ async function loadGangs(){
     };
     renderImages();
 
-    // Add Image button
     const addImageBtn = document.createElement("button");
     addImageBtn.textContent="➕ Add Image";
     addImageBtn.style.backgroundColor="#10b981";
@@ -242,9 +241,9 @@ async function loadGangs(){
     content.appendChild(addImageBtn);
 
     // Google Doc iframe
-    if(gang.google_doc_url){
+    if(gang.googleDocUrl){
       const iframe = document.createElement("iframe");
-      iframe.src = gang.google_doc_url.includes("/edit")?gang.google_doc_url:`${gang.google_doc_url}/edit?usp=sharing`;
+      iframe.src = gang.googleDocUrl.includes("/edit") ? gang.googleDocUrl : `${gang.googleDocUrl}/edit?usp=sharing`;
       content.appendChild(iframe);
 
       const expandBtn = document.createElement("button");
@@ -285,7 +284,7 @@ addGangBtn.onclick = async () => {
       images: "",
       casefileby: "",
       notes: "",
-      google_doc_url: ""
+      googleDocUrl: ""
     }]);
     if(error) alert("Error adding gang:"+error.message);
     else loadGangs();
@@ -295,7 +294,7 @@ addGangBtn.onclick = async () => {
 // Real-time updates
 supabase.channel('realtime-gangs')
   .on('postgres_changes', { event: '*', schema: 'public', table: 'gang_intel' }, payload => {
-    loadGangs(); // reload gangs whenever a change happens
+    loadGangs();
   }).subscribe();
 
 loadGangs();
