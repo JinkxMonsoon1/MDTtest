@@ -147,11 +147,11 @@ async function loadGangs(){
     const content = document.createElement("div");
     content.className="gang-content";
 
-    // Editable fields
-    content.appendChild(makeEditable("Case File By", gang.caseFileBy || "", "caseFileBy", gang.id));
+    // Editable fields with new column names
+    content.appendChild(makeEditable("Case File By", gang.casefileby || "", "casefileby", gang.id));
     content.appendChild(makeEditable("Members", gang.members || "", "members", gang.id));
     content.appendChild(makeEditable("Notes", gang.notes || "", "notes", gang.id));
-    content.appendChild(makeEditable("Google Doc URL", gang.googleDocUrl || "", "googleDocUrl", gang.id));
+    content.appendChild(makeEditable("Google Doc URL", gang.googleurl || "", "googleurl", gang.id));
 
     // Last updated
     const lastUpdated = document.createElement("p");
@@ -165,7 +165,6 @@ async function loadGangs(){
     imagesContainer.style.gap="10px";
     content.appendChild(imagesContainer);
 
-    // Render images function
     const renderImages = () => {
       imagesContainer.innerHTML="";
       if(gang.images){
@@ -244,9 +243,9 @@ async function loadGangs(){
     content.appendChild(addImageBtn);
 
     // Google Doc iframe
-    if(gang.googleDocUrl){
+    if(gang.googleurl){
       const iframe = document.createElement("iframe");
-      iframe.src = gang.googleDocUrl.includes("/edit")?gang.googleDocUrl:`${gang.googleDocUrl}/edit?usp=sharing`;
+      iframe.src = gang.googleurl.includes("/edit") ? gang.googleurl : `${gang.googleurl}/edit?usp=sharing`;
       content.appendChild(iframe);
 
       const expandBtn = document.createElement("button");
@@ -285,9 +284,9 @@ addGangBtn.onclick = async () => {
       name: name,
       members: "",
       images: "",
-      caseFileBy: "",
+      casefileby: "",
       notes: "",
-      googleDocUrl: ""
+      googleurl: ""
     }]);
     if(error) alert("Error adding gang:"+error.message);
     else loadGangs();
