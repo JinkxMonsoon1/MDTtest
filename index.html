@@ -5,77 +5,52 @@
 <title>Gang Intel MDT</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  /* Base Styles */
-  body {
-    font-family: 'Arial', sans-serif;
-    margin: 0; padding: 20px;
-    background: #f4f4f8; color: #111;
-    transition: all 0.3s ease;
-  }
+  /* Base */
+  body { font-family: Arial, sans-serif; margin:0; padding:20px; background:#f4f4f8; color:#111; transition:0.3s; }
+  h1 { text-align:center; margin-bottom:20px; }
 
-  h1 { margin-bottom: 20px; text-align: center; }
+  /* Light/Dark slider */
+  .theme-toggle { display:flex; justify-content:center; margin-bottom:20px; }
+  .switch { position:relative; width:60px; height:34px; }
+  .switch input { opacity:0; width:0; height:0; }
+  .slider { position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background:#ccc; transition:.4s; border-radius:34px; }
+  .slider:before { position:absolute; content:""; height:26px; width:26px; left:4px; bottom:4px; background:white; border-radius:50%; transition:.4s; }
+  input:checked + .slider { background:#4caf50; }
+  input:checked + .slider:before { transform:translateX(26px); }
 
-  /* Light/Dark mode slider */
-  .theme-toggle {
-    display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
-  }
-  .switch {
-    position: relative; display: inline-block; width: 60px; height: 34px;
-  }
-  .switch input { opacity: 0; width: 0; height: 0; }
-  .slider {
-    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #ccc; transition: .4s; border-radius: 34px;
-  }
-  .slider:before {
-    position: absolute; content: ""; height: 26px; width: 26px;
-    left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%;
-  }
-  input:checked + .slider { background-color: #4caf50; }
-  input:checked + .slider:before { transform: translateX(26px); }
+  /* Buttons */
+  button { padding:10px 18px; border:none; border-radius:6px; cursor:pointer; font-size:14px; transition:0.2s; }
+  button:hover { opacity:0.85; }
+  .add-btn { background:#10b981; color:white; margin-bottom:20px; }
+  .delete-btn { background:#dc2626; color:white; margin-top:10px; }
+  .expand-btn { background:#f59e0b; color:white; margin-top:10px; }
 
-  /* Card styles */
-  .gang-card {
-    background: #fff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    margin: 15px auto; width: 80%; max-width: 800px; overflow: hidden;
-    transition: 0.3s; cursor: pointer;
-  }
-  .gang-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
-  .gang-header {
-    background: linear-gradient(90deg, #1e3a8a, #3b82f6); color: #fff;
-    padding: 16px; display: flex; justify-content: space-between; align-items: center;
-    font-size: 1.2rem;
-  }
-  .gang-content { display: none; padding: 16px; }
-  .gang-card.active .gang-content { display: block; }
+  /* Card */
+  .gang-card { background:white; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1); margin:15px auto; width:80%; max-width:800px; overflow:hidden; transition:.3s; }
+  .gang-card:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.2); }
+  .gang-header { background:linear-gradient(90deg,#1e3a8a,#3b82f6); color:white; padding:16px; display:flex; justify-content:space-between; align-items:center; font-size:1.2rem; cursor:pointer; }
+  .gang-content { display:none; padding:16px; }
+  .gang-card.active .gang-content { display:block; }
 
-  button {
-    padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer;
-    font-size: 14px; transition: 0.2s;
-  }
-  button:hover { opacity: 0.85; }
-  .add-btn { background-color: #10b981; color: #fff; margin-bottom: 20px; }
-  .delete-btn { background-color: #dc2626; color: #fff; margin-top: 10px; }
-  .expand-btn { background-color: #f59e0b; color: #fff; margin-top: 10px; }
-  .edit-icon { cursor: pointer; color: #2563eb; margin-left: 5px; }
-  .edit-icon:hover { color: #1d4ed8; }
+  .edit-icon { cursor:pointer; color:#2563eb; margin-left:5px; }
+  .edit-icon:hover { color:#1d4ed8; }
 
-  .gang-card img { width: 120px; height: 80px; object-fit: cover; border-radius: 6px; margin: 5px; cursor: pointer; transition: 0.2s; }
-  .gang-card img:hover { transform: scale(1.05); }
+  .gang-card img { width:120px; height:80px; object-fit:cover; border-radius:6px; margin:5px; cursor:pointer; transition:0.2s; }
+  .gang-card img:hover { transform:scale(1.05); }
 
-  iframe { width: 100%; height: 200px; border: none; border-radius: 8px; margin-top: 10px; }
+  iframe { width:100%; height:200px; border:none; border-radius:8px; margin-top:10px; }
 
   /* Modal */
-  .modal { display: none; position: fixed; z-index: 9999; left:0; top:0; width:100vw; height:100vh; background: rgba(0,0,0,0.9); align-items:center; justify-content:center; }
-  .modal-content { width: 90vw; height: 90vh; max-width: 1200px; max-height: 90vh; }
-  .modal-content img, .modal-content iframe { width: 100%; height: 100%; }
-  .close-btn { position:absolute; top: 20px; right: 30px; color: #fff; font-size: 30px; font-weight:bold; cursor:pointer; }
+  .modal { display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.9); align-items:center; justify-content:center; }
+  .modal-content { width:90vw; height:90vh; max-width:1200px; max-height:90vh; }
+  .modal-content img, .modal-content iframe { width:100%; height:100%; }
+  .close-btn { position:absolute; top:20px; right:30px; color:white; font-size:30px; font-weight:bold; cursor:pointer; }
 
   /* Dark mode */
-  body.dark { background: #1e1e2f; color: #eee; }
-  body.dark .gang-card { background: #2a2a3d; color: #eee; }
-  body.dark .gang-header { background: linear-gradient(90deg, #3b82f6, #1e3a8a); }
-  body.dark button { color: #fff; }
+  body.dark { background:#1e1e2f; color:#eee; }
+  body.dark .gang-card { background:#2a2a3d; color:#eee; }
+  body.dark .gang-header { background:linear-gradient(90deg,#3b82f6,#1e3a8a); }
+  body.dark button { color:#fff; }
 </style>
 </head>
 <body>
@@ -112,140 +87,137 @@ closeBtn.onclick = () => { modal.style.display="none"; modalContent.innerHTML=""
 window.onclick = e => { if(e.target===modal){ modal.style.display="none"; modalContent.innerHTML=""; } }
 
 // Light/Dark mode
-document.addEventListener("DOMContentLoaded", () => {
-  const themeToggle = document.getElementById("themeToggle");
-  if(localStorage.getItem("theme")==="dark"){ document.body.classList.add("dark"); themeToggle.checked=true; }
-  themeToggle.addEventListener("change", ()=>{
-    if(themeToggle.checked){ document.body.classList.add("dark"); localStorage.setItem("theme","dark"); }
-    else { document.body.classList.remove("dark"); localStorage.setItem("theme","light"); }
-  });
+const themeToggle = document.getElementById("themeToggle");
+if(localStorage.getItem("theme")==="dark"){ document.body.classList.add("dark"); themeToggle.checked=true; }
+themeToggle.addEventListener("change", ()=>{
+  if(themeToggle.checked){ document.body.classList.add("dark"); localStorage.setItem("theme","dark"); }
+  else { document.body.classList.remove("dark"); localStorage.setItem("theme","light"); }
 });
 
-// Editable field helper
+// Editable helpers
 function makeEditable(label, value, column, gangId){
   const p = document.createElement("p");
-  const span = document.createElement("span");
-  span.textContent = value||"";
-  span.style.marginLeft="5px";
-
-  const editIcon = document.createElement("span");
-  editIcon.textContent="✏️"; editIcon.className="edit-icon";
+  const span = document.createElement("span"); span.textContent=value||""; span.style.marginLeft="5px";
+  const editIcon = document.createElement("span"); editIcon.textContent="✏️"; editIcon.className="edit-icon";
   editIcon.onclick = async e=>{
     e.stopPropagation();
     const input = column==="notes"?document.createElement("textarea"):document.createElement("input");
     input.value = span.textContent; input.style.width="70%";
     span.replaceWith(input); input.focus();
     input.onblur=async ()=>{
-      const val = input.value.trim();
-      const {error} = await supabase.from("gang_intel").update({[column]:val}).eq("id",gangId);
-      if(error){ alert("Error: "+error.message); input.replaceWith(span); } else { span.textContent=val; input.replaceWith(span); }
+      const val=input.value.trim();
+      const {error}=await supabase.from("gang_intel").update({[column]:val}).eq("id",gangId);
+      if(error){ alert("Error:"+error.message); input.replaceWith(span); } else { span.textContent=val; input.replaceWith(span); }
     };
-    if(column!=="notes") input.onkeydown = e=>{if(e.key==="Enter") input.blur();}
+    if(column!=="notes") input.onkeydown = e=>{ if(e.key==="Enter") input.blur(); }
   };
-  p.innerHTML=`<strong>${label}:</strong>`;
-  p.appendChild(span); p.appendChild(editIcon);
+  p.innerHTML=`<strong>${label}:</strong>`; p.appendChild(span); p.appendChild(editIcon);
   return p;
 }
 
-// Editable name
 function makeNameEditable(name, id){
   const div = document.createElement("div");
-  const span = document.createElement("span");
-  span.textContent=name; span.style.fontWeight="bold"; span.style.fontSize="1.2rem";
-  const editIcon=document.createElement("span"); editIcon.textContent="✏️"; editIcon.className="edit-icon";
-  editIcon.onclick=async e=>{
+  const span = document.createElement("span"); span.textContent=name; span.style.fontWeight="bold"; span.style.fontSize="1.2rem";
+  const editIcon = document.createElement("span"); editIcon.textContent="✏️"; editIcon.className="edit-icon";
+  editIcon.onclick = async e=>{
     e.stopPropagation();
-    const input=document.createElement("input"); input.value=span.textContent; input.style.fontSize="1.2rem"; input.style.fontWeight="bold";
+    const input = document.createElement("input"); input.value=span.textContent; input.style.fontSize="1.2rem"; input.style.fontWeight="bold";
     span.replaceWith(input); input.focus();
-    input.onblur=async ()=>{
-      const val=input.value.trim();
-      const {error}=await supabase.from("gang_intel").update({name:val}).eq("id",id);
-      if(error){ alert("Error: "+error.message); input.replaceWith(span); } else { span.textContent=val; input.replaceWith(span); }
+    input.onblur = async ()=>{
+      const val = input.value.trim();
+      const {error} = await supabase.from("gang_intel").update({name:val}).eq("id",id);
+      if(error){ alert("Error:"+error.message); input.replaceWith(span); } else { span.textContent=val; input.replaceWith(span); }
     };
-    input.onkeydown=e=>{if(e.key==="Enter") input.blur();}
+    input.onkeydown = e=>{ if(e.key==="Enter") input.blur(); }
   };
   div.appendChild(span); div.appendChild(editIcon); return div;
 }
 
 // Load gangs
 async function loadGangs(){
-  const {data,error}=await supabase.from("gang_intel").select("*").order("id",{ascending:true});
+  const {data,error} = await supabase.from("gang_intel").select("*").order("id",{ascending:true});
   if(error){ console.error(error); return; }
   gangContainer.innerHTML="";
   data.forEach(gang=>{
-    const card=document.createElement("div"); card.className="gang-card"; card.dataset.id=gang.id;
-    const header=document.createElement("div"); header.className="gang-header"; header.appendChild(makeNameEditable(gang.name||"",gang.id));
-    const content=document.createElement("div"); content.className="gang-content";
+    const card = document.createElement("div"); card.className="gang-card"; card.dataset.id=gang.id;
+    const header = document.createElement("div"); header.className="gang-header"; header.appendChild(makeNameEditable(gang.name||"",gang.id));
+    const content = document.createElement("div"); content.className="gang-content";
     content.appendChild(makeEditable("Case File By", gang.casefileby||"","casefileby",gang.id));
     content.appendChild(makeEditable("Members", gang.members||"","members",gang.id));
     content.appendChild(makeEditable("Notes", gang.notes||"","notes",gang.id));
     content.appendChild(makeEditable("Google Doc URL", gang.googleurl||"","googleurl",gang.id));
 
     // Images
-    const imagesContainer=document.createElement("div"); imagesContainer.style.display="flex"; imagesContainer.style.flexWrap="wrap"; imagesContainer.style.gap="10px";
+    const imagesContainer = document.createElement("div"); imagesContainer.style.display="flex"; imagesContainer.style.flexWrap="wrap"; imagesContainer.style.gap="10px";
     content.appendChild(imagesContainer);
-
-    const renderImages=()=>{
+    const renderImages = ()=>{
       imagesContainer.innerHTML="";
       if(gang.images){
         gang.images.split(",").forEach((url,index)=>{
           if(url.trim()){
-            const imgWrapper=document.createElement("div"); imgWrapper.style.position="relative";
-            const img=document.createElement("img"); img.src=url.trim();
-            img.onclick=()=>{ modal.style.display="flex"; modalContent.innerHTML=`<img src="${img.src}">`; };
-            const editIcon=document.createElement("span"); editIcon.textContent="✏️"; editIcon.style.position="absolute"; editIcon.style.top="2px"; editIcon.style.right="2px"; editIcon.style.cursor="pointer";
-            editIcon.onclick=async e=>{
+            const imgWrapper = document.createElement("div"); imgWrapper.style.position="relative";
+            const img = document.createElement("img"); img.src=url.trim();
+            img.onclick=()=>{ modal.style.display="flex"; modalContent.innerHTML=`<img src="${img.src}">`; }
+            const editIcon = document.createElement("span"); editIcon.textContent="✏️"; editIcon.style.position="absolute"; editIcon.style.top="2px"; editIcon.style.right="2px"; editIcon.style.cursor="pointer";
+            editIcon.onclick = async e=>{
               e.stopPropagation(); const newUrl=prompt("Edit image URL:",url.trim());
               if(newUrl){ const arr=gang.images.split(","); arr[index]=newUrl.trim();
                 const {error}=await supabase.from("gang_intel").update({images:arr.join(",")}).eq("id",gang.id);
                 if(error) alert("Error:"+error.message); else { gang.images=arr.join(","); renderImages(); }
               }
             };
-            const delIcon=document.createElement("span"); delIcon.textContent="🗑️"; delIcon.style.position="absolute"; delIcon.style.bottom="2px"; delIcon.style.right="2px"; delIcon.style.cursor="pointer";
-            delIcon.onclick=async e=>{ e.stopPropagation(); if(confirm("Delete this image?")){ const arr=gang.images.split(","); arr.splice(index,1);
+            const delIcon = document.createElement("span"); delIcon.textContent="🗑️"; delIcon.style.position="absolute"; delIcon.style.bottom="2px"; delIcon.style.right="2px"; delIcon.style.cursor="pointer";
+            delIcon.onclick = async e=>{ e.stopPropagation(); if(confirm("Delete this image?")){ const arr=gang.images.split(","); arr.splice(index,1);
               const {error}=await supabase.from("gang_intel").update({images:arr.join(",")}).eq("id",gang.id);
               if(error) alert("Error:"+error.message); else { gang.images=arr.join(","); renderImages(); } } };
-            imgWrapper.appendChild(img); imgWrapper.appendChild(editIcon); imgWrapper.appendChild(delIcon);
-            imagesContainer.appendChild(imgWrapper);
+            imgWrapper.appendChild(img); imgWrapper.appendChild(editIcon); imgWrapper.appendChild(delIcon); imagesContainer.appendChild(imgWrapper);
           }
         });
       }
     }; renderImages();
-
-    const addImageBtn=document.createElement("button"); addImageBtn.textContent="➕ Add Image"; addImageBtn.className="add-btn";
-    addImageBtn.onclick=async ()=>{ const url=prompt("Enter image URL:"); if(url){ const newImgs=gang.images?gang.images+","+url.trim():url.trim();
-      const {error}=await supabase.from("gang_intel").update({images:newImgs}).eq("id",gang.id);
-      if(error) alert("Error:"+error.message); else { gang.images=newImgs; renderImages(); } } };
+    const addImageBtn = document.createElement("button"); addImageBtn.textContent="➕ Add Image"; addImageBtn.className="add-btn";
+    addImageBtn.onclick = async ()=>{
+      const url=prompt("Enter image URL:"); if(url){ const newImgs=gang.images?gang.images+","+url.trim():url.trim();
+        const {error}=await supabase.from("gang_intel").update({images:newImgs}).eq("id",gang.id);
+        if(error) alert("Error:"+error.message); else { gang.images=newImgs; renderImages(); } }
+    };
     content.appendChild(addImageBtn);
 
-    // Google Doc iframe
+    // Google Doc
     if(gang.googleurl){
-      const iframe=document.createElement("iframe");
-      iframe.src=gang.googleurl.includes("/edit")?gang.googleurl:`${gang.googleurl}/edit?usp=sharing`;
+      const iframe = document.createElement("iframe");
+      iframe.src = gang.googleurl.includes("/edit") ? gang.googleurl : `${gang.googleurl}/edit?usp=sharing`;
       content.appendChild(iframe);
-      const expandBtn=document.createElement("button"); expandBtn.textContent="🔍 Expand Doc"; expandBtn.className="expand-btn";
-      expandBtn.onclick=()=>{ modal.style.display="flex"; modalContent.innerHTML=`<iframe src="${iframe.src}"></iframe>`; };
+      const expandBtn = document.createElement("button"); expandBtn.textContent="🔍 Expand Doc"; expandBtn.className="expand-btn";
+      expandBtn.onclick = ()=>{ modal.style.display="flex"; modalContent.innerHTML=`<iframe src="${iframe.src}"></iframe>`; }
       content.appendChild(expandBtn);
     }
 
-    const deleteBtn=document.createElement("button"); deleteBtn.textContent="🗑️ Delete Gang"; deleteBtn.className="delete-btn";
-    deleteBtn.onclick=async ()=>{ if(confirm(`Delete ${gang.name}?`)){ const {error}=await supabase.from("gang_intel").delete().eq("id",gang.id); if(error) alert("Error:"+error.message); else loadGangs(); } };
+    // Delete gang
+    const deleteBtn = document.createElement("button"); deleteBtn.textContent="🗑️ Delete Gang"; deleteBtn.className="delete-btn";
+    deleteBtn.onclick = async ()=>{ if(confirm(`Delete ${gang.name}?`)){ const {error}=await supabase.from("gang_intel").delete().eq("id",gang.id); if(error) alert("Error:"+error.message); else loadGangs(); } };
     content.appendChild(deleteBtn);
 
     card.appendChild(header); card.appendChild(content); gangContainer.appendChild(card);
-    header.onclick=()=>card.classList.toggle("active");
+    header.onclick=()=> card.classList.toggle("active");
   });
 }
 
-// Add new gang
-addGangBtn.onclick=async ()=>{ const name=prompt("Enter gang name:"); if(name){
-  const {error}=await supabase.from("gang_intel").insert([{ name:name, members:"", images:"", casefileby:"", notes:"", googleurl:"" }]);
-  if(error) alert("Error:"+error.message); else loadGangs(); }
-};
+// Add gang
+addGangBtn.onclick = async ()=>{
+  const name = prompt("Enter gang name:");
+  if(name){
+    const {error} = await supabase.from("gang_intel").insert([{name, members:"", images:"", casefileby:"", notes:"", googleurl:""}]);
+    if(error) alert("Error:"+error.message); else await loadGangs();
+  }
+}
 
-supabase.channel('realtime-gangs').on('postgres_changes',{event:'*', schema:'public', table:'gang_intel'}, payload=>{ loadGangs(); }).subscribe();
+// Realtime updates
+supabase.channel('realtime-gangs')
+  .on('postgres_changes',{event:'*', schema:'public', table:'gang_intel'},()=>loadGangs())
+  .subscribe();
+
 loadGangs();
 </script>
 </body>
 </html>
-
